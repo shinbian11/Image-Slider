@@ -1,23 +1,4 @@
-# webpack-boilerplate
+# Image-Slider
 
-webpack boilterplate 입니다.<br><br> eslint-config-airbnb 가 적용되어있습니다. <br><br> 다운로드 혹은 git clone 하여 `npm install` 실행 후 사용하시면 됩니다.
-
-
-## Installation
-
-```bash
-> npm install
-```
-
-
-## Run Dev Server
-
-```bash
-> npm run dev
-```
-
-## Build
-
-```bash
-> npm run build
-```
+- 이미지 슬라이더 클론 코딩 프로젝트
+- npm run dev를 통해 실행 할 수 있음
