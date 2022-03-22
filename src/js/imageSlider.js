@@ -5,6 +5,10 @@ export default class ImageSlider {
 
   #sliderWidth = 0;
 
+  #intervalId;
+
+  #autoPlay = true;
+
   sliderWrapEl;
 
   sliderListEl;
@@ -15,6 +19,8 @@ export default class ImageSlider {
 
   indicatorWrapEl;
 
+  controlWrapEl;
+
   constructor() {
     // 인스턴스 생성하면서 동시에 실행시킬 메소드들
     this.assignElement();
@@ -24,15 +30,23 @@ export default class ImageSlider {
     this.addEvent();
     this.createIndicator();
     this.setIndicator();
+    this.initAutoplay();
   }
 
   assignElement() {
     // HTML의 id, class명이 부여되어 있는 태그들을 가져온다.
     this.sliderWrapEl = document.getElementById('slider-wrap');
+    // this.sliderWrapEl = document.querySelector('#slider-wrap');
     this.sliderListEl = this.sliderWrapEl.querySelector('#slider');
     this.nextBtnEl = this.sliderWrapEl.querySelector('#next');
     this.previousBtnEl = this.sliderWrapEl.querySelector('#previous');
     this.indicatorWrapEl = this.sliderWrapEl.querySelector('#indicator-wrap');
+    this.controlWrapEl = this.sliderWrapEl.querySelector('.control-wrap');
+  }
+
+  // 3000ms (3초) 에 한번씩 다음 슬라이드로 이동하는 메서드
+  initAutoplay() {
+    this.#intervalId = setInterval(this.moveToRight.bind(this), 3000);
   }
 
   initSliderNumber() {
@@ -51,6 +65,7 @@ export default class ImageSlider {
     }px`;
   }
 
+  // click 이벤트 모아놓은 메소드
   addEvent() {
     this.nextBtnEl.addEventListener('click', this.moveToRight.bind(this));
     this.previousBtnEl.addEventListener('click', this.moveToLeft.bind(this));
@@ -61,6 +76,30 @@ export default class ImageSlider {
       'click',
       this.onClickIndicator.bind(this),
     );
+
+    // autoplay control
+    this.controlWrapEl.addEventListener('click', this.togglePlay.bind(this));
+  }
+
+  // pause 버튼을 누르면 play 버튼으로, 그 반대로도 아이콘이 바뀌도록 구현
+  togglePlay(event) {
+    // event.currentTarget : 이벤트를 실제로 건 대상 (이벤트 핸들러가 부착된 곳), 여기서는 .control-wrap class가 붙은 div 태그 부분 요소
+    // event.target : 실제로 발생한 이벤트의 대상 (여기서는 id 가 pause 또는 play인 i 태그)
+    // console.log(`event.currentTarget : ${event.currentTarget}`);
+    // console.log(`event.target : ${event.target}`);
+
+    // event 전파 (버블링)
+    if (event.target.dataset.status === 'play') {
+      this.#autoPlay = true;
+      this.controlWrapEl.classList.add('play');
+      this.controlWrapEl.classList.remove('pause');
+      this.initAutoplay();
+    } else if (event.target.dataset.status === 'pause') {
+      this.#autoPlay = false;
+      this.controlWrapEl.classList.add('pause');
+      this.controlWrapEl.classList.remove('play');
+      clearInterval(this.#intervalId);
+    }
   }
 
   // Indicator (이미지 슬라이드 하단의 동그라미들) 을 클릭하면 해당되는 이미지 슬라이드로 이동
@@ -99,6 +138,14 @@ export default class ImageSlider {
       this.#sliderWidth * this.#currentPosition
     }px`;
 
+    // autoplay 도중 다음 슬라이드로 이동하는 버튼을 눌렀을 땐,
+    // 시간을 초기화하고 다시 세야 한다.
+    if (this.#autoPlay) {
+      // autoPlay 기능이 켜져있을때만 작동해야 한다
+      clearInterval(this.#intervalId);
+      this.initAutoplay();
+    }
+
     this.setIndicator();
   }
 
@@ -114,6 +161,14 @@ export default class ImageSlider {
     this.sliderListEl.style.left = `-${
       this.#sliderWidth * this.#currentPosition
     }px`;
+
+    // autoplay 도중 이전 슬라이드로 이동하는 버튼을 눌렀을 땐,
+    // 시간을 초기화하고 다시 세야 한다.
+    if (this.#autoPlay) {
+      // autoPlay 기능이 켜져있을때만 작동해야 한다
+      clearInterval(this.#intervalId);
+      this.initAutoplay();
+    }
 
     this.setIndicator();
   }
