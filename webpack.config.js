@@ -14,7 +14,7 @@ module.exports = {
   mode: "development",
   devServer: {
     host: "localhost",
-    port: 8080,
+    port: 8001,
     open: true,
     watchFiles: 'index.html',
   },
@@ -33,7 +33,12 @@ module.exports = {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
+      {
+        test: /\.jpeg$/,
+        type:'asset/inline'
+      }
     ],
+    
   },
   optimization: {
     minimizer: [
