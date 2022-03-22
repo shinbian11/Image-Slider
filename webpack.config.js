@@ -20,7 +20,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "project",
+      title: "Image_Slider",
       template: "./index.html",
       inject: "body",
       favicon: "./favicon.ico"
